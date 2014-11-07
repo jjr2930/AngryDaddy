@@ -201,13 +201,16 @@ public class Maingame : MonoBehaviour {
             _oc.transform.parent = _ChatPanel.transform;
             _oc.transform.FindChild("Label").GetComponent<UILabel>().text = _c.word;
             _oc.transform.localScale = new Vector3(1f, 1f, 1f);
-             
-            _oc.transform.localPosition = new Vector3(0f, _yPos, 0f);
+
+            //_oc.transform.localPosition = new Vector3(0f, _yPos, 0f);
             if (_c.speaker == "Npc1" || _c.speaker == "Npc2" || _c.speaker == "Npc3") SoundManager.PlaySFX(SoundManager.Load("message_in"), false);
             else SoundManager.PlaySFX(SoundManager.Load("message_sent"), false);
-            
-            
+
+            _ChatPanel.GetComponent<UIGrid>().repositionNow = true;
+            yield return new WaitForSeconds(0.3f);
         }
+
+
         _Desc.SetActive(true);
         _Desc.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].background;
         SetFadeInAnswer();
