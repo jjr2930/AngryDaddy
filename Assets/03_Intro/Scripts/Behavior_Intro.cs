@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Behavior_Intro : MonoBehaviour {
-    
+    public GameObject _start;
+    public GameObject _bold;
     public GameObject[] _cuts;
     Vector3[] _v = new Vector3[] { new Vector3(-500f, 0f, 0f), new Vector3(0f, 500f, 0f), new Vector3(0f, -420f, 0f), new Vector3(550f, -550f, 0f) };
     int[] _MovingScene = new int[] { 0, 2, 5, 8};
@@ -16,7 +17,7 @@ public class Behavior_Intro : MonoBehaviour {
         SetChangeSprite(_log._sex);
         SetDeActive();
         yield return StartCoroutine( SetActive());
-        Application.LoadLevelAsync("10_MainGame");
+        //Application.LoadLevelAsync("10_MainGame");
 	}
 
     void SetChangeSprite(int _g)
@@ -52,9 +53,20 @@ public class Behavior_Intro : MonoBehaviour {
             {
                 _o.SetActive(true);
             }
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.1f);
             _idx++;
         }
+        yield return new WaitForSeconds(1.0f);
+        _start.SetActive(true);
+        //GameObject.Find("SpriteBold").GetComponent<Behavior_StartBold>().OnOff = true;
+        yield return null;
+        iTween.MoveFrom(_start, iTween.Hash("x", _start.transform.localPosition.x + 350f, "islocal", true, "time", 1f,
+                                                "easetype", iTween.EaseType.easeOutBounce,
+                                                "delay", 0.5f,
+                                                "oncomplete", "StartAnim",
+                                                "oncompletetarget", GameObject.Find("SpriteBold")));
+
+        
     }
 
 	// Update is called once per frame

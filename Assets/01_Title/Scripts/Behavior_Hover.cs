@@ -4,20 +4,27 @@ using System.Collections;
 public class Behavior_Hover : MonoBehaviour {
 
     float _y = 0f;
-
+    Vector3 _originVector;
     void Start()
     {
         if (transform.parent.name == "Credit") _y = -90;
         if (transform.parent.name == "Exit") _y = -90;
+        _originVector = this.transform.parent.localPosition;
     }
 
 	void OnHover(bool _isOver)
     {
         if (_isOver)
+        {
             SoundManager.PlaySFX(SoundManager.Load("menu slide"), false);
-            iTween.MoveTo(transform.parent.gameObject, iTween.Hash("position", new Vector3(0f, _y, 0f), "islocal", true, "time", 1));
+            iTween.MoveTo(transform.parent.gameObject, iTween.Hash("position", new Vector3(_originVector.x-30, _originVector.y, 0f), "islocal", true, "time", 1));
+            GameObject.Find("SpriteBold").GetComponent<Behavior_StartBold>().OnOff = false;;
+        }
         if (_isOver == false)
-            iTween.MoveTo(transform.parent.gameObject, iTween.Hash("position", new Vector3(85f, _y, 0f), "islocal", true, "time", 1));
+        {
+            iTween.MoveTo(transform.parent.gameObject, iTween.Hash("position", new Vector3(_originVector.x, _originVector.y, 0f), "islocal", true, "time", 1));
+            GameObject.Find("SpriteBold").GetComponent<Behavior_StartBold>().OnOff = true ;
+        }
 
     }
 
