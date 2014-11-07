@@ -9,6 +9,7 @@ public class TalkAutoResize : MonoBehaviour {
         _sprite = GetComponent<UISprite>();
         _label  = GetComponentInChildren<UILabel>();
         _sprite.height = _label.height;
+        //this.renderer.material.color = new Color(1.0f,1.0f,1.0f,0.0f);
 	}
 	
 	// Update is called once per frame

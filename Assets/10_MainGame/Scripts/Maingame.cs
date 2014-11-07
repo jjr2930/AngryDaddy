@@ -71,7 +71,7 @@ public class Maingame : MonoBehaviour {
     int _Level = 1;
 
     //Panel 
-    float _yPos = -61.0f;
+    float _yPos = 0f;
 
     string filePath = "";
     Rootobject _obj;
@@ -85,11 +85,12 @@ public class Maingame : MonoBehaviour {
     /// <summary>
     /// 정열이가 만듬
     /// </summary>
-    public float _fAutoSetPosTime;
-    private UISprite[] _talks;
-
+    //private UISprite[] _talks;
+    private List<GameObject> _talks;
+    GameObject _beforeObj = null;
     // Use this for initialization
 	void Start () {
+        _talks = new List<GameObject>();
         filePath = System.IO.Path.Combine(Application.streamingAssetsPath, "Levels.json");
         _log = JSONSerializer.Deserialize<Log>(PlayerPrefs.GetString("gamelog"));
         if (_log._sex == 1) _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = "son1";
@@ -101,7 +102,10 @@ public class Maingame : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {        
+	void FixedUpdate ()
+    {
+        #region 안볼꺼얌
+        /*
         _talks = _ChatPanel.GetComponentsInChildren<UISprite>();
 
         if (null == _talks)
@@ -126,7 +130,8 @@ public class Maingame : MonoBehaviour {
             }
             
         }
-        
+        */
+        #endregion
         if (_status == Status.Play) GetRemainTime();
         if (_status == Status.Play) SetUpdateFace();
         if (_status == Status.TimeOver || _status == Status.Clear || _status == Status.Fail || _status == Status.Judge) SetResult();
@@ -184,10 +189,11 @@ public class Maingame : MonoBehaviour {
         float _progress = (float)x / (float)_obj.Levels.Count();
         _num.GetComponent<UIProgressBar>().value = 1f - _progress;
 
+        _talks = new List<GameObject>(); //가비지컬렉터가 알이서 메모리 해재해 주겠지....
+        _yPos = 0;
         foreach (Chats _c in _o[0].chats)
-        {
-            //_yPos -= 61f;
-
+        {   
+            
             _npcpan1.transform.localPosition = new Vector3(45f, 0f, 0f);
             _npcpan2.transform.localPosition = new Vector3(45f, 0f, 0f);
             _npcpan3.transform.localPosition = new Vector3(45f, 0f, 0f);
@@ -197,20 +203,44 @@ public class Maingame : MonoBehaviour {
             if (_c.speaker == "Npc3") _npcpan3.transform.localPosition = Vector3.zero;
 
             GameObject _oc = Instantiate((_c.speaker == "Npc1" || _c.speaker == "Npc2" || _c.speaker == "Npc3") ? _EnemyChat : _PlayerChat, Vector3.zero, Quaternion.identity) as GameObject;
+            
+            _talks.Add(_oc);//리스트에넣고
 
-            _oc.transform.parent = _ChatPanel.transform;
+            _oc.transform.parent = _ChatPanel.transform; 
             _oc.transform.FindChild("Label").GetComponent<UILabel>().text = _c.word;
             _oc.transform.localScale = new Vector3(1f, 1f, 1f);
+            _oc.transform.localPosition = new Vector3(0f, _yPos, 0f);
+            
+            //글자 싸이즈에 따라 여러 문제가 생김 따라서 한번에 만들어놓고 나중에 위치조정
+            //그것을 위해 안보이게함
+            _oc.GetComponent<UISprite>().color = new Color(1f,1f,1f,0f);
+            Color labelNowColor = _oc.GetComponentInChildren<UILabel>().color;
+            _oc.GetComponentInChildren<UILabel>().color = new Color(labelNowColor.r,labelNowColor.g,labelNowColor.b,0f);
 
-            //_oc.transform.localPosition = new Vector3(0f, _yPos, 0f);
-            if (_c.speaker == "Npc1" || _c.speaker == "Npc2" || _c.speaker == "Npc3") SoundManager.PlaySFX(SoundManager.Load("message_in"), false);
-            else SoundManager.PlaySFX(SoundManager.Load("message_sent"), false);
-
-            _ChatPanel.GetComponent<UIGrid>().repositionNow = true;
-            yield return new WaitForSeconds(0.3f);
+            //if (_c.speaker == "Npc1" || _c.speaker == "Npc2" || _c.speaker == "Npc3") SoundManager.PlaySFX(SoundManager.Load("message_in"), false);
+            //else SoundManager.PlaySFX(SoundManager.Load("message_sent"), false);
+            //yield return new WaitForSeconds(1.0f);
         }
+        yield return new WaitForSeconds(0.1f);
+        _yPos = 0;
+        for(int i =0; i<_talks.Count; i++)
+        {            
+            if(0 == i)
+            {
+                _yPos -= _talks[i].GetComponent<UISprite>().height/2;
+            }
+            else
+            {
+                _yPos -= _talks[i-1].GetComponent<UISprite>().height / 2 + _talks[i].GetComponent<UISprite>().height/2 + 10f;
+            }
+            _talks[i].transform.localPosition = new Vector3(0f, _yPos, 0f);
+            _talks[i].GetComponent<UISprite>().color = new Color(1f,1f,1f,1f);
 
-
+            Color labelNowColor = _talks[i].GetComponentInChildren<UILabel>().color;
+            _talks[i].GetComponentInChildren<UILabel>().color = new Color(labelNowColor.r,labelNowColor.g,labelNowColor.b,1f);
+           
+            yield return new WaitForSeconds(1.0f);
+        }
         _Desc.SetActive(true);
         _Desc.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].background;
         SetFadeInAnswer();
@@ -240,24 +270,48 @@ public class Maingame : MonoBehaviour {
     public IEnumerator SetAttack(string _msg, int _dmg, int _link, int _ori, string _remsg)
     {
         SetFadeOffAnswer();
-
-        //_yPos -= 61f;
+        
         GameObject _oc = Instantiate(_PlayerChat, Vector3.zero, Quaternion.identity) as GameObject;
+        _talks.Add(_oc);
         _oc.transform.parent = _ChatPanel.transform;
         _oc.transform.FindChild("Label").GetComponent<UILabel>().text = _msg;
         _oc.transform.localScale = new Vector3(1f, 1f, 1f);
-        _oc.transform.localPosition = new Vector3(0f, _yPos, 0f);
-        //_ChatPanel.GetComponent<UIGrid>().Reposition();
 
-        yield return new WaitForSeconds(1f);
-        //_yPos -= 61f;
+        //역시 안보이게
+        _oc.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 0f);
+        Color labelNowColor = _oc.GetComponentInChildren<UILabel>().color;
+        _oc.GetComponentInChildren<UILabel>().color = new Color(labelNowColor.r, labelNowColor.g, labelNowColor.b, 0f);
+        
+        yield return new WaitForSeconds(0.1f);//이시간후에 보이게
+        
+        //위치와 컬러지정
+        _yPos -= _talks[2].GetComponent<UISprite>().height /2 + _oc.GetComponent<UISprite>().height/2 + 10;
+        
+        //보이게한다.
+        _oc.transform.localPosition = new Vector3(0f,_yPos,0f);
+        _oc.GetComponent<UISprite>().color = new Color(labelNowColor.r,labelNowColor.g,labelNowColor.b,1f);
+        _oc.GetComponentInChildren<UILabel>().color = new Color(labelNowColor.r, labelNowColor.g, labelNowColor.b, 1f);
+
+        //딜레이
+        yield return new WaitForSeconds(0.5f);
+
         SoundManager.PlaySFX(SoundManager.Load("message_in"), false);
         GameObject _on = Instantiate(_EnemyChat, Vector3.zero, Quaternion.identity) as GameObject;
+        _talks.Add(_on);
         _on.transform.parent = _ChatPanel.transform;
         _on.transform.FindChild("Label").GetComponent<UILabel>().text = _remsg;
         _on.transform.localScale = new Vector3(1f, 1f, 1f);
-        _on.transform.localPosition = new Vector3(0f, _yPos, 0f);
-        //_ChatPanel.GetComponent<UIGrid>().Reposition();
+        //역시 안보이게
+        _on.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 0f);
+        labelNowColor = _on.GetComponentInChildren<UILabel>().color;
+        _on.GetComponentInChildren<UILabel>().color = new Color(labelNowColor.r, labelNowColor.g, labelNowColor.b, 0f);
+        yield return new WaitForSeconds(0.1f);
+        //위치와 컬러지정
+        _yPos -= _talks[3].GetComponent<UISprite>().height /2 + _on.GetComponent<UISprite>().height/2 +10;   
+        _on.transform.localPosition = new Vector3(0f,_yPos, 0f);
+        _on.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 1f);
+        _on.GetComponentInChildren<UILabel>().color = new Color(labelNowColor.r, labelNowColor.g, labelNowColor.b, 1f);
+        
 
         yield return new WaitForSeconds(1f);
         if (_dmg <= 0)
