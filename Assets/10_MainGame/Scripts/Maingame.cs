@@ -98,6 +98,10 @@ public class Maingame : MonoBehaviour {
         _time = _limitTime;
        
         _startTime = Time.time;
+        _Awer1.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer2.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer3.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer4.GetComponent<AnswerControl>().JSetActive(false);
         StartCoroutine(SetInit(_Level));
 	}
 	
@@ -184,7 +188,11 @@ public class Maingame : MonoBehaviour {
             _status = Status.Judge;
             yield break;
         }
-
+        //상황 설명이 먼저 나와야함
+        _Desc.SetActive(true);
+        _Desc.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].background;
+        //SetFadeInAnswer();
+        yield return new WaitForSeconds(1.0f);
 
         float _progress = (float)x / (float)_obj.Levels.Count();
         _num.GetComponent<UIProgressBar>().value = 1f - _progress;
@@ -241,29 +249,40 @@ public class Maingame : MonoBehaviour {
            
             yield return new WaitForSeconds(1.0f);
         }
-        _Desc.SetActive(true);
-        _Desc.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].background;
-        SetFadeInAnswer();
+        
+
+        //_Awer1.SetActive(true);
+        _Awer1.GetComponent<AnswerControl>().JSetActive(true);
+        _Awer1.GetComponentInChildren<Behavior_Answer>().init(_o[0].answer[0].word, _o[0].answer[0].power, _o[0].answer[0].linkid, x, _o[0].answer[0].attacker);
+        _Awer1.GetComponent<AnswerControl>().SetText(_o[0].answer[0].word);
+        //_Awer1.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[0].word;
         yield return new WaitForSeconds(0.5f);
 
-        _Awer1.SetActive(true);
-        _Awer1.GetComponent<Behavior_Answer>().init(_o[0].answer[0].word, _o[0].answer[0].power, _o[0].answer[0].linkid, x, _o[0].answer[0].attacker);
-        _Awer1.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[0].word;
+        //_Awer2.SetActive(true);
+        _Awer2.GetComponent<AnswerControl>().JSetActive(true);
+        _Awer2.GetComponentInChildren<Behavior_Answer>().init(_o[0].answer[1].word, _o[0].answer[1].power, _o[0].answer[1].linkid, x, _o[0].answer[1].attacker);
+        _Awer2.GetComponent<AnswerControl>().SetText(_o[0].answer[1].word);
+
+        //_Awer2.GetComponent<Behavior_Answer>().init(_o[0].answer[1].word, _o[0].answer[1].power, _o[0].answer[1].linkid, x, _o[0].answer[1].attacker);
+        //_Awer2.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[1].word;
         yield return new WaitForSeconds(0.5f);
 
-        _Awer2.SetActive(true);
-        _Awer2.GetComponent<Behavior_Answer>().init(_o[0].answer[1].word, _o[0].answer[1].power, _o[0].answer[1].linkid, x, _o[0].answer[1].attacker);
-        _Awer2.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[1].word;
+        //_Awer3.SetActive(true);
+        _Awer3.GetComponent<AnswerControl>().JSetActive(true);
+        _Awer3.GetComponentInChildren<Behavior_Answer>().init(_o[0].answer[2].word, _o[0].answer[2].power, _o[0].answer[2].linkid, x, _o[0].answer[2].attacker);
+        _Awer3.GetComponent<AnswerControl>().SetText(_o[0].answer[2].word);
+
+        //_Awer3.GetComponent<Behavior_Answer>().init(_o[0].answer[2].word, _o[0].answer[2].power, _o[0].answer[2].linkid, x, _o[0].answer[2].attacker);
+        //_Awer3.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[2].word;
         yield return new WaitForSeconds(0.5f);
 
-        _Awer3.SetActive(true);
-        _Awer3.GetComponent<Behavior_Answer>().init(_o[0].answer[2].word, _o[0].answer[2].power, _o[0].answer[2].linkid, x, _o[0].answer[2].attacker);
-        _Awer3.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[2].word;
-        yield return new WaitForSeconds(0.5f);
+        //_Awer4.SetActive(true);
+        _Awer4.GetComponent<AnswerControl>().JSetActive(true);
+        _Awer4.GetComponentInChildren<Behavior_Answer>().init(_o[0].answer[3].word, _o[0].answer[3].power, _o[0].answer[3].linkid, x, _o[0].answer[3].attacker);
+        _Awer4.GetComponent<AnswerControl>().SetText(_o[0].answer[3].word);
 
-        _Awer4.SetActive(true);
-        _Awer4.GetComponent<Behavior_Answer>().init(_o[0].answer[3].word, _o[0].answer[3].power, _o[0].answer[3].linkid, x, _o[0].answer[3].attacker);
-        _Awer4.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[3].word;
+        //_Awer4.GetComponent<Behavior_Answer>().init(_o[0].answer[3].word, _o[0].answer[3].power, _o[0].answer[3].linkid, x, _o[0].answer[3].attacker);
+        //_Awer4.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[3].word;
         yield return new WaitForSeconds(0.5f);
     }
 
@@ -340,20 +359,19 @@ public class Maingame : MonoBehaviour {
     void SetFadeInAnswer()
     {
         _Desc.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 1f);
-        _Awer1.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 1f);
-        _Awer2.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 1f);
-        _Awer3.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 1f);
-        _Awer4.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 1f);
-
+        _Awer1.GetComponent<AnswerControl>().JSetActive(true);
+        _Awer2.GetComponent<AnswerControl>().JSetActive(true);
+        _Awer3.GetComponent<AnswerControl>().JSetActive(true);
+        _Awer4.GetComponent<AnswerControl>().JSetActive(true);
     }
     
     void SetFadeOffAnswer()
     {
         _Desc.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 0f);
-        _Awer1.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 0f);
-        _Awer2.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 0f);
-        _Awer3.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 0f);
-        _Awer4.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 0f);
+        _Awer1.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer1.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer1.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer1.GetComponent<AnswerControl>().JSetActive(false);
     }
 
     //공격실패

@@ -16,6 +16,7 @@ public class Behavior_UpDown : MonoBehaviour {
 
     void OnClick()
     {
+        SoundManager.PlaySFX(SoundManager.Load("ButtonClick"));
         if (transform.name == "Up")
             _label.text = (int.Parse(_label.text) + 1).ToString();
         if (transform.name == "Down")

@@ -17,14 +17,14 @@ public class Behavior_Answer : MonoBehaviour {
         _attacker = _atk;
 	}
 	
-    void OnClick() {
+    public void OnClick() {
         if (_ClickCnt > 0) return;
         _ClickCnt++;
         SoundManager.PlaySFX(SoundManager.Load("attack"), false);
-        StartCoroutine(transform.parent.parent.GetComponent<Maingame>().SetAttack(_word, _damage, _linkid, _oriid, _attacker));
+        StartCoroutine(GameObject.FindObjectOfType<Maingame>().SetAttack(_word, _damage, _linkid, _oriid, _attacker));
 	}
 
-    void OnHover(bool _isOver)
+    public void OnHover(bool _isOver)
     {
         if (_isOver) SoundManager.PlaySFX(SoundManager.Load("menu slide"), false);
     }

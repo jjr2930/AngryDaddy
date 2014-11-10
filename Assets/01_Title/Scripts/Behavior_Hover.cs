@@ -16,7 +16,7 @@ public class Behavior_Hover : MonoBehaviour {
     {
         if (_isOver)
         {
-            SoundManager.PlaySFX(SoundManager.Load("menu slide"), false);
+            SoundManager.PlaySFX(SoundManager.Load("MouseOver"), false);
             iTween.MoveTo(transform.parent.gameObject, iTween.Hash("position", new Vector3(_originVector.x-30, _originVector.y, 0f), "islocal", true, "time", 1));
             GameObject.Find("SpriteBold").GetComponent<Behavior_StartBold>().OnOff = false;;
         }
@@ -30,9 +30,18 @@ public class Behavior_Hover : MonoBehaviour {
 
     void OnClick()
     {
-        SoundManager.PlaySFX(SoundManager.Load("click"), false);
-        if (transform.parent.name == "Start") Application.LoadLevel("02_Infomation");
-        //if (transform.parent.name == "Credit") Application.LoadLevel("01_Creadit");
-        if (transform.parent.name == "Exit") Application.LoadLevel("01_Creadit");
+        SoundManager.PlaySFX(SoundManager.Load("ButtonClick"));
+        if (Application.loadedLevelName == "00_Title")
+        { 
+            //SoundManager.PlaySFX(SoundManager.Load("click"), false);
+            if (transform.parent.name == "Start") Application.LoadLevel("02_Infomation");
+            //if (transform.parent.name == "Credit") Application.LoadLevel("01_Creadit");
+            if (transform.parent.name == "Exit") Application.LoadLevel("01_Creadit");
+        }
+        else if(Application.loadedLevelName == "03_Intro")
+        {
+            //SoundManager.PlaySFX(SoundManager.Load("ButtonOver"), false);
+            if (transform.parent.name == "Start") Application.LoadLevel("10_MainGame");
+        }
     }
 }

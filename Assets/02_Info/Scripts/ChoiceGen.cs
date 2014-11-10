@@ -8,9 +8,10 @@ public class ChoiceGen : MonoBehaviour {
 
     void OnClick()
     {
+        
         if (ClickCnt > 0) return;
 
-        SoundManager.PlaySFX(SoundManager.Load("click"), false);
+        SoundManager.PlaySFX(SoundManager.Load("ButtonClick"), false);
         Transform _obj = GameObject.Find("UI Root").transform.FindChild("Camera").transform.FindChild("Container").transform.FindChild("BirthLabel").transform.FindChild("InputBox").transform.FindChild("BirthLabel");
         int _birthyear = int.Parse(_obj.GetComponent<UILabel>().text);
         int _gen = (transform.name == "Male") ? 1 : 0;
@@ -25,5 +26,4 @@ public class ChoiceGen : MonoBehaviour {
 
         Application.LoadLevelAsync("03_Intro");
     }
-
 }

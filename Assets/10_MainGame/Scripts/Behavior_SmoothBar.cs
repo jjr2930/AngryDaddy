@@ -51,10 +51,13 @@ public class Behavior_SmoothBar : MonoBehaviour {
     IEnumerator SetAni()
     {
         _isLock = true;
+        
+        //흔들기
+        iTween.ShakePosition(this.gameObject,new Vector3(0.1f,0.1f,0f), 0.2f);
         GetComponent<UIProgressBar>().value = _valBefore;
         while (_valAfter < GetComponent<UIProgressBar>().value)
         {
-            GetComponent<UIProgressBar>().value -= 0.02f;
+            GetComponent<UIProgressBar>().value -= 0.001f;
             yield return new WaitForSeconds(0.01f);
         }
         GetComponent<UIProgressBar>().value = _valAfter;

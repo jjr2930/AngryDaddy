@@ -14,6 +14,7 @@ public class TalkAutoResize : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        _sprite.height = _label.height;
+        if(null != _sprite )
+            _sprite.height = _label.height;
 	}
 }
