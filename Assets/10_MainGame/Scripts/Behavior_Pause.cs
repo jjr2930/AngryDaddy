@@ -37,6 +37,9 @@ public class Behavior_Pause : MonoBehaviour {
             _pausePanel.SetActive(true);
         }
     }
+    /// <summary>
+    /// 버튼을 플레이 모양으로 바꾼다. 옵션들도 그에 맞게
+    /// </summary>
     public void SetPlayButton()
     {
         GetComponent<UISprite>().spriteName = "Btn_Play_1";
@@ -44,6 +47,9 @@ public class Behavior_Pause : MonoBehaviour {
         GetComponent<UIButton>().pressedSprite = "Btn_Play_2";
         _state = PauseState.Play;
     }
+    /// <summary>
+    /// 버튼을 일시정지 모양으로 바꾼다. 옵션들도 그에 맞게
+    /// </summary>
     public void SetPauseButton()
     {
         GetComponent<UISprite>().spriteName = "Btn_Pause_1";

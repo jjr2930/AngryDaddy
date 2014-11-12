@@ -585,6 +585,7 @@ public class Maingame : MonoBehaviour {
         _Awer2.SetActive(false);
         _Awer3.SetActive(false);
         _Awer4.SetActive(false);
+        GameObject.Find("Pause").SetActive(false);
         StartCoroutine(SetActResultWin(_Staus));
     }
 
