@@ -228,8 +228,8 @@ public class Maingame : MonoBehaviour {
             //글자 싸이즈에 따라 여러 문제가 생김 따라서 한번에 만들어놓고 나중에 위치조정
             //그것을 위해 안보이게함
             _oc.GetComponent<UISprite>().color = new Color(1f,1f,1f,0f);
-            Color labelNowColor = _oc.GetComponentInChildren<UILabel>().color;
-            _oc.GetComponentInChildren<UILabel>().color = new Color(labelNowColor.r,labelNowColor.g,labelNowColor.b,0f);
+            Color labelNowColor = _oc.transform.FindChild("Label").GetComponent<UILabel>().color;
+            _oc.transform.FindChild("Label").GetComponent<UILabel>().color = new Color(labelNowColor.r,labelNowColor.g,labelNowColor.b,0f);
 
             //if (_c.speaker == "Npc1" || _c.speaker == "Npc2" || _c.speaker == "Npc3") SoundManager.PlaySFX(SoundManager.Load("message_in"), false);
             //else SoundManager.PlaySFX(SoundManager.Load("message_sent"), false);
@@ -250,8 +250,8 @@ public class Maingame : MonoBehaviour {
             _talks[i].transform.localPosition = new Vector3(0f, _yPos, 0f);
             _talks[i].GetComponent<UISprite>().color = new Color(1f,1f,1f,1f);
 
-            Color labelNowColor = _talks[i].GetComponentInChildren<UILabel>().color;
-            _talks[i].GetComponentInChildren<UILabel>().color = new Color(labelNowColor.r,labelNowColor.g,labelNowColor.b,1f);
+            Color labelNowColor = _talks[i].transform.GetChild(0).GetComponent<UILabel>().color;
+            _talks[i].transform.GetChild(0).GetComponent<UILabel>().color = new Color(labelNowColor.r,labelNowColor.g,labelNowColor.b,1f);
            
             yield return new WaitForSeconds(1.0f);
         }
