@@ -39,7 +39,9 @@ public class Maingame : MonoBehaviour {
     //HP바/별/타이머
     public GameObject _star;
     public GameObject _HpE;
+    public GameObject _HpEEffect;
     public GameObject _HpP;
+    public GameObject _HpPEffect;
     public GameObject _Timer;
 
 
@@ -87,7 +89,9 @@ public class Maingame : MonoBehaviour {
     /// </summary>
     //private UISprite[] _talks;
     private List<GameObject> _talks;
+    public GameObject _dadyTalk;
     GameObject _beforeObj = null;
+    private int testInt =0;
     // Use this for initialization
 	void Start () {
         _talks = new List<GameObject>();
@@ -98,10 +102,6 @@ public class Maingame : MonoBehaviour {
         _time = _limitTime;
        
         _startTime = Time.time;
-        _Awer1.GetComponent<AnswerControl>().JSetActive(false);
-        _Awer2.GetComponent<AnswerControl>().JSetActive(false);
-        _Awer3.GetComponent<AnswerControl>().JSetActive(false);
-        _Awer4.GetComponent<AnswerControl>().JSetActive(false);
         StartCoroutine(SetInit(_Level));
 	}
 	
@@ -178,6 +178,11 @@ public class Maingame : MonoBehaviour {
     //문제초기화
     IEnumerator SetInit(int x)
     {
+        testInt++;
+        if(testInt == 3)
+        {
+            Debug.Log("stop");
+        }
         //플레이모드가 아님 튕김
         if (_status != Status.Play) yield break;
         //x번 문제를 가져옴
@@ -188,11 +193,12 @@ public class Maingame : MonoBehaviour {
             _status = Status.Judge;
             yield break;
         }
+        _dadyTalk.SetActive(false);
         //상황 설명이 먼저 나와야함
-        _Desc.SetActive(true);
+        _Desc.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 1f);
         _Desc.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].background;
         //SetFadeInAnswer();
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(2.0f);
 
         float _progress = (float)x / (float)_obj.Levels.Count();
         _num.GetComponent<UIProgressBar>().value = 1f - _progress;
@@ -333,11 +339,57 @@ public class Maingame : MonoBehaviour {
         
 
         yield return new WaitForSeconds(1f);
-        if (_dmg <= 0)
+        _dadyTalk.SetActive(true);
+        string daddyContext = "[000000]";
+        if (_dmg <= 0)//hit
+        {
             StartCoroutine(SetFailStage(_dmg, _ori));
+            int rnd = UnityEngine.Random.Range(0, 4);
+            switch (rnd)
+            {
+                case 0:
+                    daddyContext += "이런...";
+                    break;
+                case 1:
+                    daddyContext += "조금만 더 신중히 \n생각해봐";
+                    break;
+                case 2:
+                    daddyContext += "네 감정을 조금 \n더 정확히 표현해봐";
+                    break;
+                case 3:
+                    daddyContext += "그건 아니지!!";
+                    break;
+                default:
+                    daddyContext += "error";
+                    break;
+            }
+            _dadyTalk.GetComponent<UILabel>().text = daddyContext;
+        }
         else
+        {
             StartCoroutine(SetSuccessStage(_dmg, _ori));
-
+            int rnd = UnityEngine.Random.Range(0, 4);
+            switch (rnd)
+            {
+                case 0:
+                    daddyContext += "좋아 잘했어 역시 \n우리 " + ((_log._sex == 0)? "딸":"아들");
+                    break;
+                case 1:
+                    daddyContext += "한방 먹였는걸?";
+                    break;
+                case 2:
+                    daddyContext += "완벽해";
+                    break;
+                case 3:
+                    daddyContext += "최고야";
+                    break;
+                default:
+                    daddyContext += "error";
+                    break;
+            }
+            _dadyTalk.GetComponent<UILabel>().text = daddyContext;
+        }
+        
         yield return new WaitForSeconds(3f);
         
         GameObject[] _obj = GameObject.FindGameObjectsWithTag("Chat");
@@ -349,11 +401,11 @@ public class Maingame : MonoBehaviour {
         StartCoroutine(SetInit(_link));
 
         //todo : 호출자 삭제시 프로세스 중단 현상 수정
-        _Desc.SetActive(false);
-        _Awer1.SetActive(false);
-        _Awer2.SetActive(false);
-        _Awer3.SetActive(false);
-        _Awer4.SetActive(false);
+        //_Desc.SetActive(false);
+        _Awer1.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer2.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer3.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer4.GetComponent<AnswerControl>().JSetActive(false);
     }
 
     void SetFadeInAnswer()
@@ -369,9 +421,9 @@ public class Maingame : MonoBehaviour {
     {
         _Desc.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 0f);
         _Awer1.GetComponent<AnswerControl>().JSetActive(false);
-        _Awer1.GetComponent<AnswerControl>().JSetActive(false);
-        _Awer1.GetComponent<AnswerControl>().JSetActive(false);
-        _Awer1.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer2.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer3.GetComponent<AnswerControl>().JSetActive(false);
+        _Awer4.GetComponent<AnswerControl>().JSetActive(false);
     }
 
     //공격실패
@@ -383,7 +435,8 @@ public class Maingame : MonoBehaviour {
         float _x = _HpE.GetComponent<UIProgressBar>().value;
         _playerPower += (_x > 0.3f) ? _dmg : _dmg * 2;
         _Player.GetComponent<UISprite>().spriteName = "dad2";
-        _HpP.GetComponent<UIProgressBar>().value = _playerPower / 1000f;
+        _HpP.GetComponent<Behavior_SmoothBar>()._valAfter = _playerPower / 1000f;
+        yield return new WaitForSeconds (0.5f);
         StartCoroutine(SetFailEffect(_stage));
         yield return new WaitForSeconds(1.5f);
 
@@ -421,7 +474,8 @@ public class Maingame : MonoBehaviour {
         StartCoroutine(SetEffect(_Damage, _stage));
 
         _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = (_log._sex == 1) ? "son2" : "daughter2";
-        _HpE.GetComponent<UIProgressBar>().value = _npcPower / 1000f;
+        _HpE.GetComponent<Behavior_SmoothBar>()._valAfter = _npcPower / 1000f;
+        
         yield return new WaitForSeconds(2f);
         _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = (_log._sex == 1) ? "son1" : "daughter1";
     }

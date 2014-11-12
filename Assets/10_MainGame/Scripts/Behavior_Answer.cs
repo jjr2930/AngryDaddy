@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Behavior_Answer : MonoBehaviour {
 
-    int _ClickCnt = 0;
+    public int _ClickCnt{get;set;}
 
     string _word, _attacker;
     int _damage, _linkid, _oriid;

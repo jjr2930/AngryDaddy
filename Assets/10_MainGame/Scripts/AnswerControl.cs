@@ -12,11 +12,14 @@ public class AnswerControl : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        Debug.Log("in start func");
 	    _answerLabel = transform.FindChild("Text").GetComponent<UILabel>();
         _answerBack = _answerLabel.GetComponentInChildren<UISprite>();
 
         _numBack = transform.FindChild("Num").GetComponent<UISprite>();
         _numLabel = _numBack.transform.FindChild("Label").GetComponent<UILabel>();
+
+        JSetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -52,6 +55,8 @@ public class AnswerControl : MonoBehaviour {
             originColor = _numLabel.color;
             _numBack.color      = new Color(1,1,1,1);
             _numLabel.color     = new Color(originColor.r,originColor.g,originColor.b,1);
+
+            this.GetComponentInChildren<Behavior_Answer>()._ClickCnt = 0;
         }
         else if(!value)
         {
