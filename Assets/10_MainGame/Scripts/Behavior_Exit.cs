@@ -14,7 +14,13 @@ public class Behavior_Exit : MonoBehaviour {
     void OnClick()
     {
         if (_ClickCnt > 0) return;
+        SoundManager.PlaySFX(SoundManager.Load("ButtonClick"));
         Application.LoadLevelAsync("00_Title");
+    }
+    void OnHover()
+    {
+        if (_ClickCnt > 0) return;
+        SoundManager.PlaySFX(SoundManager.Load("MouseOver"));
     }
 
 }
