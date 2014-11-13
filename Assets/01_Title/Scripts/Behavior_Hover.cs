@@ -41,6 +41,7 @@ public class Behavior_Hover : MonoBehaviour {
         else if(Application.loadedLevelName == "03_Intro")
         {
             //SoundManager.PlaySFX(SoundManager.Load("ButtonOver"), false);
+            PlayerPrefs.SetInt("retry",0);
             if (transform.parent.name == "Start") Application.LoadLevel("10_MainGame");
         }
     }

@@ -26,4 +26,8 @@ public class ChoiceGen : MonoBehaviour {
 
         Application.LoadLevelAsync("03_Intro");
     }
+    void OnHover()
+    {
+        SoundManager.PlaySFX(SoundManager.Load("MouseOver"));
+    }
 }

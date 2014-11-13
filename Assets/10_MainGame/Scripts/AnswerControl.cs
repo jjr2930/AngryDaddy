@@ -45,7 +45,7 @@ public class AnswerControl : MonoBehaviour {
     }
     public void JSetActive(bool value)
     {
-        Debug.Log("call Active func");
+        //Debug.Log("call Active func");
         if(value)
         {
             Color originColor = _answerLabel.color;
@@ -56,7 +56,8 @@ public class AnswerControl : MonoBehaviour {
             _numBack.color      = new Color(1,1,1,1);
             _numLabel.color     = new Color(originColor.r,originColor.g,originColor.b,1);
 
-            this.GetComponentInChildren<Behavior_Answer>()._ClickCnt = 0;
+            if(null != GetComponentInChildren<Behavior_Answer>())
+                this.GetComponentInChildren<Behavior_Answer>()._ClickCnt = 0;
         }
         else if(!value)
         {

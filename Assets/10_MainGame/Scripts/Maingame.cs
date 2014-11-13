@@ -92,12 +92,13 @@ public class Maingame : MonoBehaviour {
     public GameObject _dadyTalk;
     GameObject _beforeObj = null;
     private int testInt =0;
+    public GameObject _MoreBack;    //더보기 패널
     // Use this for initialization
 	void Start () {
         _talks = new List<GameObject>();
         filePath = System.IO.Path.Combine(Application.streamingAssetsPath, "Levels.json");
         _log = JSONSerializer.Deserialize<Log>(PlayerPrefs.GetString("gamelog"));
-        if (_log._sex == 1) _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = "son1";
+        if (_log._sex == 1) _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = "3_son_1";
         DeserialJson(GetJson());
         _time = _limitTime;
        
@@ -181,7 +182,7 @@ public class Maingame : MonoBehaviour {
         testInt++;
         if(testInt == 3)
         {
-            Debug.Log("stop");
+           // Debug.Log("stop");
         }
         //플레이모드가 아님 튕김
         if (_status != Status.Play) yield break;
@@ -434,13 +435,15 @@ public class Maingame : MonoBehaviour {
         SoundManager.PlaySFX(SoundManager.Load("attack_fail"), false);
         float _x = _HpE.GetComponent<UIProgressBar>().value;
         _playerPower += (_x > 0.3f) ? _dmg : _dmg * 2;
-        _Player.GetComponent<UISprite>().spriteName = "dad2";
+        _Player.GetComponent<UISprite>().spriteName = "3_dad_3";
+        _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = (_log._sex == 1) ? "3_son_3" : "3_daughter_3";
         _HpP.GetComponent<Behavior_SmoothBar>()._valAfter = _playerPower / 1000f;
         yield return new WaitForSeconds (0.5f);
         StartCoroutine(SetFailEffect(_stage));
         yield return new WaitForSeconds(1.5f);
 
-        _Player.GetComponent<UISprite>().spriteName = "dad1";
+        _Player.GetComponent<UISprite>().spriteName = "3_dad_1";
+        _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = (_log._sex == 1) ? "3_son_1" : "3_daughter_1";
     }
 
     IEnumerator SetFailEffect(int _s)
@@ -473,11 +476,13 @@ public class Maingame : MonoBehaviour {
         _npcPower -= _Damage;
         StartCoroutine(SetEffect(_Damage, _stage));
 
-        _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = (_log._sex == 1) ? "son2" : "daughter2";
+        _Player.GetComponent<UISprite>().spriteName = "3_dad_2";
+        _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = (_log._sex == 1) ? "3_son_2" : "3_daughter_2";
         _HpE.GetComponent<Behavior_SmoothBar>()._valAfter = _npcPower / 1000f;
         
         yield return new WaitForSeconds(2f);
-        _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = (_log._sex == 1) ? "son1" : "daughter1";
+        _Player.GetComponent<UISprite>().spriteName = "3_dad_1";
+        _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = (_log._sex == 1) ? "3_son_1" : "3_daughter_1";
     }
 
     IEnumerator SetEffect(float _x, int _s)
@@ -570,7 +575,7 @@ public class Maingame : MonoBehaviour {
         string _s = JSONSerializer.Serialize<Log>(_log);
 
 
-        _fingame.transform.FindChild("Label").GetComponent<UILabel>().text = (GetWin(_Staus)) ? "YOU Win" : "You lose";
+        _fingame.transform.FindChild("Label").GetComponent<UILabel>().text = (GetWin(_Staus)) ? "You Win" : "You lose";
         _fingame.SetActive(true);
 
         GameObject[] _obj = GameObject.FindGameObjectsWithTag("Chat");
@@ -598,7 +603,9 @@ public class Maingame : MonoBehaviour {
         if (GetWin(_s) == true && _s == Status.Clear) _str = "A";
         if (GetWin(_s) == true && _s == Status.Judge) _str = "B";
 
-        if (_str == "A") _ResultWin.transform.FindChild("MedalWin").FindChild("BtnRetry").gameObject.SetActive(false);
+        if (_str == "A" || PlayerPrefs.GetInt("retry") >=2) _ResultWin.transform.FindChild("MedalWin").FindChild("BtnRetry").gameObject.SetActive(false);
+        if (_str != "C") _MoreBack.SetActive(false);
+        else _MoreBack.SetActive(true);
         _ResultWin.transform.FindChild("RankWin").FindChild("RankBG").FindChild("Radius").FindChild("Label").GetComponent<UILabel>().text = _str;
         _MedalWin.transform.FindChild("Medal1").GetComponent<UISprite>().spriteName = (_log._maxCombo >= 2) ? "emblem1" : "emblem1-";
         _MedalWin.transform.FindChild("Medal2").GetComponent<UISprite>().spriteName = (_log._maxCombo >= 3) ? "emblem2" : "emblem2-";
@@ -611,7 +618,7 @@ public class Maingame : MonoBehaviour {
         _MedalWin.transform.FindChild("Medal5").GetComponent<UISprite>().spriteName = (_rate >= 0.5f) ? "emblem5" : "emblem5-";
         _MedalWin.transform.FindChild("Medal6").GetComponent<UISprite>().spriteName = (_rate >= 0.7f) ? "emblem6" : "emblem6-";
         _MedalWin.transform.FindChild("Medal7").GetComponent<UISprite>().spriteName = (_rate >= 0.9f) ? "emblem7" : "emblem7-";
-        _MedalWin.transform.FindChild("Medal8").GetComponent<UISprite>().spriteName = (_log._retryCnt > 0) ? "emblem8" : "emblem8-";
+        _MedalWin.transform.FindChild("Medal8").GetComponent<UISprite>().spriteName = (PlayerPrefs.GetInt("retry") > 0) ? "emblem8" : "emblem8-";
         _MedalWin.transform.FindChild("Radius").FindChild("Label").GetComponent<UILabel>().text = string.Format("{0:F0}%", _rate * 100f);
 
         if (_str == "A")
@@ -620,6 +627,8 @@ public class Maingame : MonoBehaviour {
             SoundManager.PlaySFX(SoundManager.Load("resultB"), false);
         if (_str == "C")
             SoundManager.PlaySFX(SoundManager.Load("resultC"), false);
+
+        GameObject.FindObjectOfType<MoreClickFunc>()._rank = _str;
     }
 
     bool GetWin(Status _Status)
@@ -650,8 +659,11 @@ public class Maingame : MonoBehaviour {
         _startTime = Time.time;
         _status = Status.Play;
         //_yPos = 0f;
-        StartCoroutine(SetInit(_Level));
+        //StartCoroutine(SetInit(_Level));
         if (SoundManager.IsMusicMuted() == true) SoundManager.MuteMusic();
+        Debug.Log(PlayerPrefs.GetInt("retry"));
+        PlayerPrefs.SetInt("retry",PlayerPrefs.GetInt("retry") + 1);
+        Application.LoadLevel("10_MainGame");
     }
 
 }

@@ -2,17 +2,25 @@
 using System.Collections;
 
 public class Behaviour_Medal : MonoBehaviour {
-
 	// Use this for initialization
-	void Start () {
-	
+	private GameObject _tooltip;
+    Ray _ray;
+    RaycastHit _hit;
+
+    void Start () {
+	    _hit = new RaycastHit();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
-	}
 
+	}
+    void OnHover()
+    {
+
+    }
+    #region 안볼꾸얌
+    /*
     void OnTooltip(bool show)
     {
         if (show == true)
@@ -45,11 +53,14 @@ public class Behaviour_Medal : MonoBehaviour {
                     text += "게임을 실패 후 다시하게 되면 얻는다.";
                     break;
             }
-            UITooltip.ShowText(text);
+            text += "[-]";
+            UITooltip.Show(text);
         }
         else
         {
-            UITooltip.
+            UITooltip.Hide();
         }
     }
+    */
+    #endregion
 }
