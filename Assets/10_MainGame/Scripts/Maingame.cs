@@ -603,9 +603,15 @@ public class Maingame : MonoBehaviour {
         if (GetWin(_s) == true && _s == Status.Clear) _str = "A";
         if (GetWin(_s) == true && _s == Status.Judge) _str = "B";
 
-        if (_str == "A" || PlayerPrefs.GetInt("retry") >=2) _ResultWin.transform.FindChild("MedalWin").FindChild("BtnRetry").gameObject.SetActive(false);
-        if (_str != "C") _MoreBack.SetActive(false);
-        else _MoreBack.SetActive(true);
+        //if (_str == "A" || PlayerPrefs.GetInt("retry") >=2) _ResultWin.transform.FindChild("MedalWin").FindChild("BtnRetry").gameObject.SetActive(false);
+        if (_str != "A")
+        {
+            GameObject _retry =  _ResultWin.transform.Find("MedalWin").FindChild("BtnRetry").gameObject;
+            _retry.SetActive(true);
+            JUIEffectManager.MakeTwicle(_retry);
+        }
+        //if (_str != "C") _MoreBack.SetActive(false);
+        //else _MoreBack.SetActive(true);
         _ResultWin.transform.FindChild("RankWin").FindChild("RankBG").FindChild("Radius").FindChild("Label").GetComponent<UILabel>().text = _str;
         _MedalWin.transform.FindChild("Medal1").GetComponent<UISprite>().spriteName = (_log._maxCombo >= 2) ? "emblem1" : "emblem1-";
         _MedalWin.transform.FindChild("Medal2").GetComponent<UISprite>().spriteName = (_log._maxCombo >= 3) ? "emblem2" : "emblem2-";

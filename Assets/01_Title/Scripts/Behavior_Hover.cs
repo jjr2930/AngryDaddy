@@ -5,6 +5,7 @@ public class Behavior_Hover : MonoBehaviour {
 
     float _y = 0f;
     Vector3 _originVector;
+    JTwincleUI _twincle;
     void Start()
     {
         if (transform.parent.name == "Credit") _y = -90;
@@ -17,13 +18,14 @@ public class Behavior_Hover : MonoBehaviour {
         if (_isOver)
         {
             SoundManager.PlaySFX(SoundManager.Load("MouseOver"), false);
+            _twincle =GetComponent<JTwincleUI>();
+            _twincle.Stop = true;
             iTween.MoveTo(transform.parent.gameObject, iTween.Hash("position", new Vector3(_originVector.x-30, _originVector.y, 0f), "islocal", true, "time", 1));
-            GameObject.Find("SpriteBold").GetComponent<Behavior_StartBold>().OnOff = false;;
         }
         if (_isOver == false)
         {
+            _twincle.StartTwicle();
             iTween.MoveTo(transform.parent.gameObject, iTween.Hash("position", new Vector3(_originVector.x, _originVector.y, 0f), "islocal", true, "time", 1));
-            GameObject.Find("SpriteBold").GetComponent<Behavior_StartBold>().OnOff = true ;
         }
 
     }
