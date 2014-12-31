@@ -1,0 +1,9 @@
+D:\Unity\AngryDaddy\Temp\UnityVS_bin\Debug\Assembly-CSharp.dll
+D:\Unity\AngryDaddy\Temp\UnityVS_bin\Debug\Assembly-CSharp.pdb
+D:\Unity\AngryDaddy\Temp\UnityVS_bin\Debug\UnityEditor.dll
+D:\Unity\AngryDaddy\Temp\UnityVS_bin\Debug\UnityEngine.dll
+D:\Unity\AngryDaddy\Temp\UnityVS_bin\Debug\UnityEngine.xml
+D:\Unity\AngryDaddy\Temp\UnityVS_bin\Debug\UnityEditor.xml
+D:\Unity\AngryDaddy\obj\Debug\UnityVS.AngryDaddy.CSharp.csprojResolveAssemblyReference.cache
+D:\Unity\AngryDaddy\obj\Debug\Assembly-CSharp.dll
+D:\Unity\AngryDaddy\obj\Debug\Assembly-CSharp.pdb

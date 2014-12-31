@@ -15,6 +15,9 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
     <CompilerResponseFile></CompilerResponseFile>
+    <UnityProjectType>Game:1</UnityProjectType>
+    <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
+    <UnityVersion>4.5.5f1</UnityVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -217,6 +220,8 @@
     <Compile Include="Assets\ExPlugins\XML-JSON Serialization\Src\XMLParser.cs" />
     <Compile Include="Assets\ExPlugins\XML-JSON Serialization\Src\XMLSerializer.cs" />
     <Compile Include="Assets\ExPlugins\iTween\iTween.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Assets\ExPlugins\NGUI\ReadMe - 3.6.8.txt" />
     <None Include="Assets\ExPlugins\NGUI\Resources\Shaders\Unlit - Premultiplied Colored 1.shader" />
     <None Include="Assets\ExPlugins\NGUI\Resources\Shaders\Unlit - Premultiplied Colored 2.shader" />

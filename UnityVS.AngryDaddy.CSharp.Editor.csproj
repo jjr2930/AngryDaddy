@@ -15,6 +15,9 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
     <CompilerResponseFile></CompilerResponseFile>
+    <UnityProjectType>Editor:5</UnityProjectType>
+    <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
+    <UnityVersion>4.5.5f1</UnityVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -154,6 +157,8 @@
     <Compile Include="Assets\ExPlugins\SoundManagerPro\Editor\SoundFXManagerEditor.cs" />
     <Compile Include="Assets\ExPlugins\SoundManagerPro\Editor\SoundManagerEditor.cs" />
     <Compile Include="Assets\ExPlugins\SoundManagerPro\Editor\SoundManagerEditorTools.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Assets\ExPlugins\NGUI\ReadMe - 3.6.8.txt" />
     <None Include="Assets\ExPlugins\NGUI\Resources\Shaders\Unlit - Premultiplied Colored 1.shader" />
     <None Include="Assets\ExPlugins\NGUI\Resources\Shaders\Unlit - Premultiplied Colored 2.shader" />
@@ -179,9 +184,6 @@
     <None Include="Assets\Sources\ImgPack\MainPack.txt" />
     <None Include="Assets\Sources\ImgPack\Result.txt" />
     <None Include="Assets\Sources\ImgPack\TitlePack.txt" />
-    <None Include="Assets\UnityVS\Editor\SyntaxTree.VisualStudio.Unity.Bridge.dll" />
-    <None Include="Assets\UnityVS\Editor\SyntaxTree.VisualStudio.Unity.Messaging.dll" />
-    <None Include="Assets\UnityVS\Editor\UnityVS.VersionSpecific.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2013\UnityVS.CSharp.targets" />
 </Project>
