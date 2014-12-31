@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Behavior_Credit : MonoBehaviour {
 
-    string[] _creditTxt = new string[] {"제작총괄:윤형섭", "기획:Jake Ahn", "디자인:김주희", "개발:민신현", "2014", "Thanx" };
+    string[] _creditTxt = new string[] {"제작총괄:윤형섭", "기획:Jake Ahn", "디자인:김주희", "개발:민신현,주정열", "2014", "Thanx" };
 
 	// Use this for initialization
 	IEnumerator Start () {

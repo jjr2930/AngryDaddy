@@ -10,9 +10,9 @@ public class AnswerControl : MonoBehaviour {
     private UISprite _numBack;
     private UILabel  _numLabel;
 
+    public bool JActive { set; get;}
 	// Use this for initialization
 	void Start () {
-        Debug.Log("in start func");
 	    _answerLabel = transform.FindChild("Text").GetComponent<UILabel>();
         _answerBack = _answerLabel.GetComponentInChildren<UISprite>();
 
@@ -46,8 +46,9 @@ public class AnswerControl : MonoBehaviour {
     public void JSetActive(bool value)
     {
         //Debug.Log("call Active func");
+        JActive = value;
         if(value)
-        {
+        {            
             Color originColor = _answerLabel.color;
             _answerBack.color   = new Color(1,1,1,1);
             _answerLabel.color  = new Color(originColor.r,originColor.g,originColor.b,1);

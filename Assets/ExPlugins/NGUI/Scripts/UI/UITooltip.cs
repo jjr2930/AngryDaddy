@@ -45,7 +45,6 @@ public class UITooltip : MonoBehaviour
 		mPos = mTrans.localPosition;
 		if (uiCamera == null) uiCamera = NGUITools.FindCameraForLayer(gameObject.layer);
 		SetAlpha(0f);
-        Debug.Log("Start" + mWidgets.Length);
 	}
 
 	/// <summary>
@@ -94,8 +93,6 @@ public class UITooltip : MonoBehaviour
 			Color c = w.color;
 			c.a = val;
 			w.color = c;
-            if(w.name == "Label")
-                Debug.Log("Label change");
 		}
 	}
 

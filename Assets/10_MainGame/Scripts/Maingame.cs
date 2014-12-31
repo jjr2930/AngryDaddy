@@ -11,10 +11,12 @@ public class Maingame : MonoBehaviour {
     public void Awake()
     {
         Maingame.instance = this;
+        _status = Status.Play;
     }
     enum Status {Play, TimeOver, Clear, Fail, Judge, End};
     Status _status = Status.Play;
-
+    //디버깅을 할때는 속도를 빠르게 해주자
+    public bool DebugMode;
 
     //Chat/설명/대답
     public GameObject _ChatPanel;
@@ -69,6 +71,10 @@ public class Maingame : MonoBehaviour {
     float _playerPower = 1000f;
     //CompoCnt;
     int _Combo = 0;
+    
+    //문제문항랜덤Queue
+    ArrayList _LevelQ = new ArrayList();
+
     //Level
     int _Level = 1;
 
@@ -92,17 +98,24 @@ public class Maingame : MonoBehaviour {
     public GameObject _dadyTalk;
     GameObject _beforeObj = null;
     private int testInt =0;
-    public GameObject _MoreBack;    //더보기 패널
+    public GameObject _MorePanel;    //더보기 패널
+    public GameObject _MoreButton;  //더보기 패널을 띄우는 기능이 있는 패널
+    public float _answerClicked{get;set;} //answer가 클릭되었니? 1이면 아님 0이면 응
+    private Vector3 _chatPanelOriginPos; //채널을 올렸다 내렸다하기 위한 변수
     // Use this for initialization
+  
 	void Start () {
+        if(DebugMode)
+            Time.timeScale = 10.0f;
         _talks = new List<GameObject>();
         filePath = System.IO.Path.Combine(Application.streamingAssetsPath, "Levels.json");
         _log = JSONSerializer.Deserialize<Log>(PlayerPrefs.GetString("gamelog"));
         if (_log._sex == 1) _Player.transform.FindChild("son").GetComponent<UISprite>().spriteName = "3_son_1";
         DeserialJson(GetJson());
         _time = _limitTime;
-       
+       _answerClicked = 1.0f;
         _startTime = Time.time;
+        _chatPanelOriginPos = _ChatPanel.transform.localPosition;
         StartCoroutine(SetInit(_Level));
 	}
 	
@@ -139,7 +152,8 @@ public class Maingame : MonoBehaviour {
         #endregion
         if (_status == Status.Play) GetRemainTime();
         if (_status == Status.Play) SetUpdateFace();
-        if (_status == Status.TimeOver || _status == Status.Clear || _status == Status.Fail || _status == Status.Judge) SetResult();
+        if (_status == Status.TimeOver || _status == Status.Clear || _status == Status.Fail || _status == Status.Judge)
+            SetResult();
     }
 
     void SetUpdateFace()
@@ -173,13 +187,27 @@ public class Maingame : MonoBehaviour {
 
     void DeserialJson(string json)
     {
+
         _obj = JSONSerializer.Deserialize<Rootobject>(json);
+        if (_obj.Levels.Count > 10)
+        {
+            do
+            {
+                _obj.Levels.RemoveAt(UnityEngine.Random.RandomRange(0, _obj.Levels.Count));
+            } while (_obj.Levels.Count > 10);
+        }
+        _LevelQ.Clear();
+        foreach (Levels _l in _obj.Levels)
+        {
+            _LevelQ.Add(_l.id);
+        }
     }
 
     //문제초기화
     IEnumerator SetInit(int x)
     {
         testInt++;
+        
         if(testInt == 3)
         {
            // Debug.Log("stop");
@@ -187,7 +215,12 @@ public class Maingame : MonoBehaviour {
         //플레이모드가 아님 튕김
         if (_status != Status.Play) yield break;
         //x번 문제를 가져옴
-        var _o = _obj.Levels.Where(a => a.id == x).ToList();
+        //var _o = _obj.Levels.Where(a => a.id >= x).OrderBy(a => a.id).Take(1).ToList();
+        var _o = new List<Levels>();
+        if (x <= _LevelQ.Count)
+            _o = _obj.Levels.Where(a => a.id == int.Parse(_LevelQ[x-1].ToString())).ToList();
+        else
+            _o = _obj.Levels.Where(a => a.id == 10000).ToList();
         //가져온 문제가 없으면 판정으로 빠짐
         if (_o.Count < 1)
         {
@@ -198,7 +231,9 @@ public class Maingame : MonoBehaviour {
         //상황 설명이 먼저 나와야함
         _Desc.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 1f);
         _Desc.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].background;
+        //SetFadeOffAnswer();
         //SetFadeInAnswer();
+        _ChatPanel.transform.localPosition = _chatPanelOriginPos;
         yield return new WaitForSeconds(2.0f);
 
         float _progress = (float)x / (float)_obj.Levels.Count();
@@ -239,7 +274,15 @@ public class Maingame : MonoBehaviour {
         yield return new WaitForSeconds(0.1f);
         _yPos = 0;
         for(int i =0; i<_talks.Count; i++)
-        {            
+        {
+            if (i % 2 == 0)
+            {
+                SoundManager.PlaySFX(SoundManager.Load("message_in"));
+            }
+            else
+            {
+                SoundManager.PlaySFX(SoundManager.Load("message_sent"));
+            }
             if(0 == i)
             {
                 _yPos -= _talks[i].GetComponent<UISprite>().height/2;
@@ -263,7 +306,7 @@ public class Maingame : MonoBehaviour {
         _Awer1.GetComponentInChildren<Behavior_Answer>().init(_o[0].answer[0].word, _o[0].answer[0].power, _o[0].answer[0].linkid, x, _o[0].answer[0].attacker);
         _Awer1.GetComponent<AnswerControl>().SetText(_o[0].answer[0].word);
         //_Awer1.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[0].word;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f * _answerClicked);
 
         //_Awer2.SetActive(true);
         _Awer2.GetComponent<AnswerControl>().JSetActive(true);
@@ -272,7 +315,7 @@ public class Maingame : MonoBehaviour {
 
         //_Awer2.GetComponent<Behavior_Answer>().init(_o[0].answer[1].word, _o[0].answer[1].power, _o[0].answer[1].linkid, x, _o[0].answer[1].attacker);
         //_Awer2.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[1].word;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f * _answerClicked);
 
         //_Awer3.SetActive(true);
         _Awer3.GetComponent<AnswerControl>().JSetActive(true);
@@ -281,7 +324,7 @@ public class Maingame : MonoBehaviour {
 
         //_Awer3.GetComponent<Behavior_Answer>().init(_o[0].answer[2].word, _o[0].answer[2].power, _o[0].answer[2].linkid, x, _o[0].answer[2].attacker);
         //_Awer3.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[2].word;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f * _answerClicked);
 
         //_Awer4.SetActive(true);
         _Awer4.GetComponent<AnswerControl>().JSetActive(true);
@@ -290,12 +333,15 @@ public class Maingame : MonoBehaviour {
 
         //_Awer4.GetComponent<Behavior_Answer>().init(_o[0].answer[3].word, _o[0].answer[3].power, _o[0].answer[3].linkid, x, _o[0].answer[3].attacker);
         //_Awer4.transform.FindChild("Label").GetComponent<UILabel>().text = _o[0].answer[3].word;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f * _answerClicked);
     }
 
     public IEnumerator SetAttack(string _msg, int _dmg, int _link, int _ori, string _remsg)
     {
-        SetFadeOffAnswer();
+        _answerClicked = 0.0f;
+        if(false == _Awer4.GetComponent<AnswerControl>().JActive)
+            yield return new WaitForSeconds(0.5f);
+        //SetFadeOffAnswer();
         
         GameObject _oc = Instantiate(_PlayerChat, Vector3.zero, Quaternion.identity) as GameObject;
         _talks.Add(_oc);
@@ -314,6 +360,7 @@ public class Maingame : MonoBehaviour {
         _yPos -= _talks[2].GetComponent<UISprite>().height /2 + _oc.GetComponent<UISprite>().height/2 + 10;
         
         //보이게한다.
+        ReposChatPanel(_talks[2].GetComponent<UISprite>().height);
         _oc.transform.localPosition = new Vector3(0f,_yPos,0f);
         _oc.GetComponent<UISprite>().color = new Color(labelNowColor.r,labelNowColor.g,labelNowColor.b,1f);
         _oc.GetComponentInChildren<UILabel>().color = new Color(labelNowColor.r, labelNowColor.g, labelNowColor.b, 1f);
@@ -334,6 +381,8 @@ public class Maingame : MonoBehaviour {
         yield return new WaitForSeconds(0.1f);
         //위치와 컬러지정
         _yPos -= _talks[3].GetComponent<UISprite>().height /2 + _on.GetComponent<UISprite>().height/2 +10;   
+        ReposChatPanel(_talks[3].GetComponent<UISprite>().height);
+
         _on.transform.localPosition = new Vector3(0f,_yPos, 0f);
         _on.GetComponent<UISprite>().color = new Color(1f, 1f, 1f, 1f);
         _on.GetComponentInChildren<UILabel>().color = new Color(labelNowColor.r, labelNowColor.g, labelNowColor.b, 1f);
@@ -352,10 +401,10 @@ public class Maingame : MonoBehaviour {
                     daddyContext += "이런...";
                     break;
                 case 1:
-                    daddyContext += "조금만 더 신중히 \n생각해봐";
+                    daddyContext += "조금만 더 신중히 생각해봐";
                     break;
                 case 2:
-                    daddyContext += "네 감정을 조금 \n더 정확히 표현해봐";
+                    daddyContext += "네 감정을 조금 더 정확히 표현해봐";
                     break;
                 case 3:
                     daddyContext += "그건 아니지!!";
@@ -373,7 +422,7 @@ public class Maingame : MonoBehaviour {
             switch (rnd)
             {
                 case 0:
-                    daddyContext += "좋아 잘했어 역시 \n우리 " + ((_log._sex == 0)? "딸":"아들");
+                    daddyContext += "좋아 잘했어 역시 우리 " + ((_log._sex == 0)? "딸":"아들");
                     break;
                 case 1:
                     daddyContext += "한방 먹였는걸?";
@@ -399,10 +448,13 @@ public class Maingame : MonoBehaviour {
             Destroy(_o);
         }
         _yPos = 62f;
-        StartCoroutine(SetInit(_link));
+        _Level++;
+        //StartCoroutine(SetInit(_link));
+        StartCoroutine(SetInit(_Level));
 
         //todo : 호출자 삭제시 프로세스 중단 현상 수정
         //_Desc.SetActive(false);
+        _answerClicked = 1.0f;
         _Awer1.GetComponent<AnswerControl>().JSetActive(false);
         _Awer2.GetComponent<AnswerControl>().JSetActive(false);
         _Awer3.GetComponent<AnswerControl>().JSetActive(false);
@@ -602,14 +654,19 @@ public class Maingame : MonoBehaviour {
         string _str = "C";
         if (GetWin(_s) == true && _s == Status.Clear) _str = "A";
         if (GetWin(_s) == true && _s == Status.Judge) _str = "B";
+        //큰 랭크 글씨
+        GameObject.Find("Radius").GetComponentInChildren<UILabel>().text = _str;
 
         //if (_str == "A" || PlayerPrefs.GetInt("retry") >=2) _ResultWin.transform.FindChild("MedalWin").FindChild("BtnRetry").gameObject.SetActive(false);
-        if (_str != "A")
-        {
-            GameObject _retry =  _ResultWin.transform.Find("MedalWin").FindChild("BtnRetry").gameObject;
-            _retry.SetActive(true);
+        
+        GameObject _retry =  _ResultWin.transform.Find("MedalWin").FindChild("BtnRetry").gameObject;
+        _retry.SetActive(true);
+        if(_str != "A")
             JUIEffectManager.MakeTwicle(_retry);
-        }
+        _MoreButton.SetActive(true);
+        _MoreButton.GetComponent<MoreClickFunc>().SetText(_str);
+        _MoreButton.GetComponent<MoreClickFunc>()._rank = _str;
+        
         //if (_str != "C") _MoreBack.SetActive(false);
         //else _MoreBack.SetActive(true);
         _ResultWin.transform.FindChild("RankWin").FindChild("RankBG").FindChild("Radius").FindChild("Label").GetComponent<UILabel>().text = _str;
@@ -634,7 +691,7 @@ public class Maingame : MonoBehaviour {
         if (_str == "C")
             SoundManager.PlaySFX(SoundManager.Load("resultC"), false);
 
-        GameObject.FindObjectOfType<MoreClickFunc>()._rank = _str;
+        //GameObject.FindObjectOfType<MoreClickFunc>()._rank = _str;
     }
 
     bool GetWin(Status _Status)
@@ -672,4 +729,13 @@ public class Maingame : MonoBehaviour {
         Application.LoadLevel("10_MainGame");
     }
 
+    private void ReposChatPanel(float chatHeight)
+    {
+        if(_yPos < -350)
+        { 
+            Vector3 newPos = _ChatPanel.transform.localPosition ;
+            newPos.y += chatHeight;
+            _ChatPanel.transform.localPosition = newPos;
+        }
+    }
 }

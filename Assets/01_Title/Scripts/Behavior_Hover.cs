@@ -18,13 +18,17 @@ public class Behavior_Hover : MonoBehaviour {
         if (_isOver)
         {
             SoundManager.PlaySFX(SoundManager.Load("MouseOver"), false);
-            _twincle =GetComponent<JTwincleUI>();
-            _twincle.Stop = true;
+            if (null != GetComponent<JTwincleUI>())
+            {
+                _twincle = GetComponent<JTwincleUI>();
+                _twincle.Stop = true;
+            }
             iTween.MoveTo(transform.parent.gameObject, iTween.Hash("position", new Vector3(_originVector.x-30, _originVector.y, 0f), "islocal", true, "time", 1));
         }
         if (_isOver == false)
         {
-            _twincle.StartTwicle();
+            if(null != GetComponent<JTwincleUI>())
+                _twincle.StartTwicle();
             iTween.MoveTo(transform.parent.gameObject, iTween.Hash("position", new Vector3(_originVector.x, _originVector.y, 0f), "islocal", true, "time", 1));
         }
 

@@ -20,6 +20,7 @@ public class Behavior_Init : MonoBehaviour {
         iTween.MoveFrom(_Menu3, iTween.Hash("x", _Menu3.transform.localPosition.x + 350f, "islocal", true, "time", 1f, "easetype", iTween.EaseType.easeOutBounce, "delay", 1f));
         yield return new WaitForSeconds(0.5f);
         _Menu1.SetActive(true);
+        //JUIEffectManager.MakeTwicle(_Menu1.transform.FindChild("Sprite").gameObject);
         //_Menu2.SetActive(true);
         _Menu3.SetActive(true);
         _TitleBG.SetActive(true);

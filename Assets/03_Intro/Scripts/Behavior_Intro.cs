@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Behavior_Intro : MonoBehaviour {
     public GameObject _start;
-    public GameObject _bold;
+    //public GameObject _bold;
     public GameObject[] _cuts;
     Vector3[] _v = new Vector3[] { new Vector3(-500f, 0f, 0f), new Vector3(0f, 500f, 0f), new Vector3(0f, -420f, 0f), new Vector3(550f, -550f, 0f) };
     int[] _MovingScene = new int[] { 0, 2, 5, 8};
@@ -62,9 +62,7 @@ public class Behavior_Intro : MonoBehaviour {
         yield return null;
         iTween.MoveFrom(_start, iTween.Hash("x", _start.transform.localPosition.x + 350f, "islocal", true, "time", 1f,
                                                 "easetype", iTween.EaseType.easeOutBounce,
-                                                "delay", 0.5f,
-                                                "oncomplete", "StartAnim",
-                                                "oncompletetarget", GameObject.Find("SpriteBold")));
+                                                "delay", 0.5f));
 
         
     }

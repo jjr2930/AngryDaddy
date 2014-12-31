@@ -42,7 +42,7 @@ public class JToolTip : MonoBehaviour {
         {            
             if((_mouseOverObjName != _hit.transform.name))
             {
-                Debug.Log(_hit.transform.name);
+                //Debug.Log(_hit.transform.name);
                 _mouseOverObjName = _hit.transform.name;
                 _mouseOverStartTime = Time.unscaledTime;
                 _pickPos = _hit.transform.localPosition;
@@ -62,7 +62,6 @@ public class JToolTip : MonoBehaviour {
             {
                 if (null != _hit.transform.GetComponent<JToolTipControl>())
                 {
-                    Debug.Log(_hit.transform.localPosition);
                     _hit.transform.GetComponent<JToolTipControl>().OnToolTip();
                 }
             }
@@ -83,8 +82,22 @@ public class JToolTip : MonoBehaviour {
         _label.text = value;
         _back.height = _label.height;
         SetAlpha(1f);
-        transform.localPosition = _pickPos + Vector3.up * 10;
-        //transform.localPosition = _pickPos;
+        transform.localPosition = _pickPos + new Vector3(_back.width,_back.height/2);
+        //Debug.Log(transform.localPosition);
+        //화면을 넘어가지 않도록 해준다.
+        Vector3 ScreenSizetoWorld = _uiCamera.ScreenToWorldPoint(new Vector3(Screen.width,Screen.height,0));    //스크린의 월드 좌표를 구한다.
+        if(transform.position .x> ScreenSizetoWorld.x)
+        {
+            transform.position = new Vector3(ScreenSizetoWorld.x,transform.position.y,0);
+        }        
+        /*
+        if(ScreenPos.x + _back.width/2 >= Screen.width) //화면을 넘어가면
+        {
+            Vector3 newPos = new Vector3(Screen.width - +_back.width/2 ,ScreenPos.y,0); //보정해준다.
+            transform.position = newPos;
+        }
+        transform.localPosition = _pickPos;
+        */
     }
     public void Hide()
     {

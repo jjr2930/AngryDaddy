@@ -22,6 +22,11 @@ public class Behavior_Answer : MonoBehaviour {
         _ClickCnt++;
         SoundManager.PlaySFX(SoundManager.Load("attack"), false);
         StartCoroutine(GameObject.FindObjectOfType<Maingame>().SetAttack(_word, _damage, _linkid, _oriid, _attacker));
+        Behavior_Answer[] objs = GameObject.FindObjectsOfType<Behavior_Answer>();
+        foreach(Behavior_Answer obj in objs)
+        {
+            obj._ClickCnt = 1;
+        }
 	}
 
     public void OnHover(bool _isOver)
