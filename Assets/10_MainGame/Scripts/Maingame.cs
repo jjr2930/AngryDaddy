@@ -93,6 +93,9 @@ public class Maingame : MonoBehaviour {
     /// <summary>
     /// 정열이가 만듬
     /// </summary>
+    /// 
+    //static 으로 해놓으면 프로그램 종료까지 사라지지 않음 오예~~!!! 그래서 편함
+    static private bool[] _isUsed = new bool[30]; //문제번호마다사용을 하였는지 체크한다.
     //private UISprite[] _talks;
     private List<GameObject> _talks;
     public GameObject _dadyTalk;
@@ -105,7 +108,10 @@ public class Maingame : MonoBehaviour {
     // Use this for initialization
   
 	void Start () {
-        if(DebugMode)
+        //_isUsed = new bool[30];
+        //_o = _obj.Levels.Where(a => a.id == int.Parse(_LevelQ[x-1].ToString())).ToList();
+        //for (int i = 0; i < _isUsed.Length; i++) { _isUsed[i] = false; }
+        if (DebugMode)
             Time.timeScale = 10.0f;
         _talks = new List<GameObject>();
         filePath = System.IO.Path.Combine(Application.streamingAssetsPath, "Levels.json");
@@ -174,7 +180,7 @@ public class Maingame : MonoBehaviour {
         if (_npcPower <= 0f) _status = Status.Clear;
         if (_playerPower <= 0f) _status = Status.Fail;
     }
-
+    
     string GetJson()
     {
         string result;
@@ -184,17 +190,47 @@ public class Maingame : MonoBehaviour {
         }
         return result;
     }
-
     void DeserialJson(string json)
     {
-
         _obj = JSONSerializer.Deserialize<Rootobject>(json);
+        int tempIndex = -1;
+        //탐색
+        for (int i = 0; i < _isUsed.Length; i++)
+        {
+            //썻다고 표시되어있는 아이들을 모두 지워주자
+            if (_isUsed[i] == true)
+            {
+                tempIndex = -1;
+                for (int j = 0; j < _obj.Levels.Count; j++)
+                {
+                    //인덱스를 찾아서 인덱스 저장용 변수에 저장해준다.
+                    if (_obj.Levels[j].id == i + 1)
+                    {
+                        tempIndex = j;
+                        _obj.Levels.RemoveAt(tempIndex);    //해당 인덱스를 제거한다.
+                    }
+                }
+                if (tempIndex == -1)
+                    Debug.LogError("not found index to delete");//인덱스를 찾지못함
+            }
+        }
+
         if (_obj.Levels.Count > 10)
         {
             do
             {
+                int rnd = UnityEngine.Random.Range((int)0, (int)_obj.Levels.Count);
                 _obj.Levels.RemoveAt(UnityEngine.Random.RandomRange(0, _obj.Levels.Count));
             } while (_obj.Levels.Count > 10);
+            //사용할 아이들을 저장한다.
+            if (_obj.Levels.Count > 0)
+            {
+                for (int i = 0; i < _obj.Levels.Count; i++)
+                {
+                    //사용한다고 표시
+                    _isUsed[_obj.Levels[i].id - 1] = true;
+                }
+            }
         }
         _LevelQ.Clear();
         foreach (Levels _l in _obj.Levels)
