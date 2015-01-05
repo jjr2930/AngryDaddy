@@ -12,6 +12,11 @@ public class Behavior_Init : MonoBehaviour {
     //public  GameObject _bold;
 	// Use this for initialization
 	IEnumerator Start () {
+        //메인게임에 사용 문항 체크를 초기화해준다.
+        for (int i = 0; i < Maingame._isUsed.Length; i++)
+        {
+            Maingame._isUsed[i] = false;
+        }
         if (SoundManager.IsMusicMuted() == true) SoundManager.MuteMusic();
         SoundManager.SetVolumeMusic(0.5f);
         SoundManager.SetVolumeSFX(1f);

@@ -95,7 +95,7 @@ public class Maingame : MonoBehaviour {
     /// </summary>
     /// 
     //static 으로 해놓으면 프로그램 종료까지 사라지지 않음 오예~~!!! 그래서 편함
-    static private bool[] _isUsed = new bool[30]; //문제번호마다사용을 하였는지 체크한다.
+    static public bool[] _isUsed = new bool[30]; //문제번호마다사용을 하였는지 체크한다.
     //private UISprite[] _talks;
     private List<GameObject> _talks;
     public GameObject _dadyTalk;
@@ -692,11 +692,16 @@ public class Maingame : MonoBehaviour {
         if (GetWin(_s) == true && _s == Status.Judge) _str = "B";
         //큰 랭크 글씨
         GameObject.Find("Radius").GetComponentInChildren<UILabel>().text = _str;
-
-        //if (_str == "A" || PlayerPrefs.GetInt("retry") >=2) _ResultWin.transform.FindChild("MedalWin").FindChild("BtnRetry").gameObject.SetActive(false);
-        
-        GameObject _retry =  _ResultWin.transform.Find("MedalWin").FindChild("BtnRetry").gameObject;
-        _retry.SetActive(true);
+        GameObject _retry = GameObject.Find("BtnRetry");
+        if (PlayerPrefs.GetInt("retry") >= 2)
+        {
+            _retry.SetActive(false);
+        }
+        //else
+        //{
+        //    GameObject _retry = _ResultWin.transform.Find("MedalWin").FindChild("BtnRetry").gameObject;
+        //    _retry.SetActive(true);
+        //}
         if(_str != "A")
             JUIEffectManager.MakeTwicle(_retry);
         _MoreButton.SetActive(true);
